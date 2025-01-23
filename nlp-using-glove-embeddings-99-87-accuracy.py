@@ -16,7 +16,7 @@
 # For example, here's several helpful packages to load in 
 
 import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+#import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
 # Input data files are available in the "../input/" directory.
 # For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
@@ -168,29 +168,29 @@ stop.update(punctuation)
 # In[19]:
 
 
-def strip_html(text):
-    soup = BeautifulSoup(text, "html.parser")
-    return soup.get_text()
+# def strip_html(text):
+#     soup = BeautifulSoup(text, "html.parser")
+#     return soup.get_text()
 
-#Removing the square brackets
-def remove_between_square_brackets(text):
-    return re.sub('\[[^]]*\]', '', text)
-# Removing URL's
-def remove_between_square_brackets(text):
-    return re.sub(r'http\S+', '', text)
-#Removing the stopwords from text
-def remove_stopwords(text):
-    final_text = []
-    for i in text.split():
-        if i.strip().lower() not in stop:
-            final_text.append(i.strip())
-    return " ".join(final_text)
-#Removing the noisy text
-def denoise_text(text):
-    text = strip_html(text)
-    text = remove_between_square_brackets(text)
-    text = remove_stopwords(text)
-    return text
+# #Removing the square brackets
+# def remove_between_square_brackets(text):
+#     return re.sub('\[[^]]*\]', '', text)
+# # Removing URL's
+# def remove_between_square_brackets(text):
+#     return re.sub(r'http\S+', '', text)
+# #Removing the stopwords from text
+# def remove_stopwords(text):
+#     final_text = []
+#     for i in text.split():
+#         if i.strip().lower() not in stop:
+#             final_text.append(i.strip())
+#     return " ".join(final_text)
+# #Removing the noisy text
+# def denoise_text(text):
+#     text = strip_html(text)
+#     text = remove_between_square_brackets(text)
+#     text = remove_stopwords(text)
+#     return text
 #Apply function on review column
 df['text']=df['text'].apply(denoise_text)
 
@@ -344,8 +344,8 @@ x_train,x_test,y_train,y_test = train_test_split(df.text,df.category,random_stat
 # In[38]:
 
 
-max_features = 10000
-maxlen = 300
+max_features = 5000
+maxlen = 150
 
 
 # **Tokenizing Text -> Repsesenting each word by a number**
@@ -451,9 +451,9 @@ model = Sequential()
 #Non-trainable embeddidng layer
 model.add(Embedding(max_features, output_dim=embed_size, weights=[embedding_matrix], input_length=maxlen, trainable=False))
 #LSTM 
-model.add(LSTM(units=128 , return_sequences = True , recurrent_dropout = 0.25 , dropout = 0.25))
-model.add(LSTM(units=64 , recurrent_dropout = 0.1 , dropout = 0.1))
-model.add(Dense(units = 32 , activation = 'relu'))
+model.add(LSTM(units=512 , return_sequences = True , recurrent_dropout = 0.25 , dropout = 0.25))
+model.add(LSTM(units=256 , recurrent_dropout = 0.1 , dropout = 0.1))
+model.add(Dense(units = 16 , activation = 'relu'))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer=keras.optimizers.Adam(lr = 0.01), loss='binary_crossentropy', metrics=['accuracy'])
 
